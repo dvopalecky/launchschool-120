@@ -28,3 +28,11 @@
 - is it ok to define `attr_accessor` and then overwrite the getter or setter?
 - when there is and error raised for an object, ruby shows the instance
   variables. How can we avoid that if needed?
+
+## Design:
+- tradeoff between
+  - more classes = more flexible code but also more indirection
+  - less classes = less flexible code but less indirection
+
+## Coding tips:
+-
