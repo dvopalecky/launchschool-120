@@ -35,4 +35,8 @@
   - less classes = less flexible code but less indirection
 
 ## Coding tips:
--
+- Explore the problem before design. Make a spike
+- Repetitive nouns in method names is a sign that you're missing a class
+- When naming methods, don't include the class names
+- Avoid long method invocation chains => long chains are fragile and hard to debug
+- Avoid design patterns for now
