@@ -57,7 +57,7 @@ class Helpers
     loop do
       answer = gets.chomp.to_i
       return answer if integer_choices.keys.include?(answer)
-      puts "Invalid choice. Please choose #{integer_choices.keys.to_a.joinor}"
+      puts "Invalid choice. Please choose #{integer_choices.keys.joinor}"
     end
   end
 end
@@ -141,7 +141,7 @@ class Computer < Player
 end
 
 class Board
-  ARR_KEYS = [[1, 2, 3], [4, 5, 6], [7, 8, 9]].freeze
+  KEYS = [[1, 2, 3], [4, 5, 6], [7, 8, 9]].freeze
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9],
                    [1, 4, 7], [2, 5, 8], [3, 6, 9],
                    [1, 5, 9], [3, 5, 7]].freeze
@@ -189,7 +189,7 @@ class Board
 
   def display
     display_dashes
-    ARR_KEYS.each do |value|
+    KEYS.each do |value|
       display_row(value)
       display_dashes
     end
@@ -289,7 +289,7 @@ class TTTGameSettings
   def change_player_name
     puts "What is your name?"
     loop do
-      answer = gets.chomp
+      answer = gets.chomp.strip
       return answer unless answer.empty?
       puts "Input can't be empty. Try again."
     end
@@ -298,7 +298,7 @@ class TTTGameSettings
   def change_player_marker
     puts "What symbol do you want? (single character)"
     loop do
-      answer = gets.chomp
+      answer = gets.chomp.strip
       return answer if answer.size == 1 && answer != Computer::MARKER.marker
       puts "Input must have 1 character and must not be "\
            "#{Computer::MARKER.marker}. Try again."
@@ -415,11 +415,11 @@ class TTTGame
     msg = " Winner needs #{@settings.points_to_win} points."
     case @board.winning_marker
     when Human::MARKER
-      puts "You won the round!" + msg
+      puts "You won the round!#{msg}"
     when Computer::MARKER
-      puts "Computer won the round!" + msg
+      puts "Computer won the round!#{msg}"
     else
-      puts "This round is a tie." + msg
+      puts "This round is a tie.#{msg}"
     end
   end
 
