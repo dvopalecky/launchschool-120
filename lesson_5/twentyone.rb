@@ -4,21 +4,25 @@ class Participant
   attr_accessor :name, :hand, :has_stayed, :score
 
   def initialize
-    @score = 0
+    self.score = 0
   end
 
   def reset(deck)
-    @hand = Hand.new
-    2.times { @hand.draw_card(deck) }
-    @has_stayed = false
+    self.hand = Hand.new
+    2.times { hand.draw_card(deck) }
+    self.has_stayed = false
+  end
+
+  def reset_score
+    @score = 0
   end
 
   def stayed?
-    @has_stayed
+    has_stayed
   end
 
   def busted?
-    @hand.busted?
+    hand.busted?
   end
 
   def <(other)
@@ -32,15 +36,15 @@ end
 
 class Player < Participant
   def initialize
-    @name = "Player"
+    self.name = "Player"
     super
   end
 
   def move(deck)
     if hit?
-      @hand.draw_card(deck)
+      hand.draw_card(deck)
     else
-      @has_stayed = true
+      self.has_stayed = true
     end
   end
 
@@ -62,20 +66,20 @@ class Dealer < Participant
   THRESHOLD = 17
 
   def initialize
-    @name = "Dealer"
+    self.name = "Dealer"
     super
   end
 
   def reset(deck)
     super
-    @hand.cards[0].is_visible = false
+    hand.cards[0].is_visible = false
   end
 
   def move(deck)
     if @hand < THRESHOLD
-      @hand.draw_card(deck)
+      hand.draw_card(deck)
     else
-      @has_stayed = true
+      self.has_stayed = true
     end
   end
 end
@@ -84,14 +88,14 @@ class Deck
   attr_accessor :cards
 
   def initialize
-    @cards = []
+    self.cards = []
     Card::CARD_NAMES.each_index do |name_index|
       Card::CARD_SUITS.each_index do |suit_index|
-        @cards << Card.new(name_index, suit_index)
+        cards << Card.new(name_index, suit_index)
       end
     end
 
-    @cards.shuffle!
+    cards.shuffle!
   end
 end
 
@@ -103,22 +107,22 @@ class Card
   attr_accessor :value, :name, :suit, :is_visible
 
   def initialize(name_index, suit_index)
-    @name = CARD_NAMES[name_index]
-    @value = CARD_VALUES[name_index]
-    @suit = CARD_SUITS[suit_index]
-    @is_visible = true
+    self.name = CARD_NAMES[name_index]
+    self.value = CARD_VALUES[name_index]
+    self.suit = CARD_SUITS[suit_index]
+    self.is_visible = true
   end
 
   def to_s
     if visible?
-      "#{@name} of #{@suit.capitalize}"
+      "#{name} of #{suit.capitalize}"
     else
       "Invisible card"
     end
   end
 
   def visible?
-    @is_visible
+    is_visible
   end
 end
 
@@ -128,13 +132,13 @@ class Hand
   attr_accessor :cards
 
   def initialize
-    @cards = []
+    self.cards = []
   end
 
   def value
     sum = 0
     sum_aces = 0
-    @cards.each do |card|
+    cards.each do |card|
       if card.value == :ace
         sum_aces += 1
         sum += 11
@@ -156,13 +160,13 @@ class Hand
   end
 
   def draw_card(deck)
-    @cards << deck.cards.pop
+    cards << deck.cards.pop
   end
 
   def to_s
-    total = @cards.all?(&:visible?) ? value : "Unknown"
+    total = cards.all?(&:visible?) ? value : "Unknown"
     busted = busted? ? " BUSTED" : ""
-    "#{@cards.each(&:to_s).join(', ')} (Total: #{total}#{busted})"
+    "#{cards.join(', ')} (Total: #{total}#{busted})"
   end
 
   def <(num)
@@ -174,7 +178,7 @@ class Hand
   end
 
   def make_visible
-    @cards.each { |card| card.is_visible = true }
+    cards.each { |card| card.is_visible = true }
   end
 end
 
@@ -198,6 +202,8 @@ class TwentyOneGame
 
       display_game_over
       break unless play_again?
+
+      reset_score
     end
 
     display_goodbye_message
@@ -209,6 +215,11 @@ class TwentyOneGame
     @deck = Deck.new
     @player.reset(@deck)
     @dealer.reset(@deck)
+  end
+
+  def reset_score
+    @player.reset_score
+    @dealer.reset_score
   end
 
   def play_round
